@@ -24,22 +24,30 @@ SUPPORTED_APPIUMBY_METHODS = {
     "FLUTTER_INTEGRATION_TEXT",
     "FLUTTER_INTEGRATION_TEXT_CONTAINING",
 }
+disallowed_substrings_for_id = ['"', "==", "XCUI", "(", ")"]
 
 VALIDATORS = {
     # Ensure ID is a non-empty string
-    "ID": lambda v: isinstance(v, str) and v.strip() != "",
+    "ID": lambda v: isinstance(v, str)
+    and v.strip() != ""
+    and not any(substr in v for substr in disallowed_substrings_for_id),
     # Ensure XPATH starts with //
     "XPATH": lambda v: isinstance(v, str) and v.startswith("//"),
     # Ensure Accessibility ID is a non-empty string
-    "ACCESSIBILITY_ID": lambda v: isinstance(v, str) and v.strip() != "",
+    "ACCESSIBILITY_ID": lambda v: isinstance(v, str)
+    and v.strip() != ""
+    and not any(substr in v for substr in disallowed_substrings_for_id),
     # Ensure Class Name is non-empty string
-    "CLASS_NAME": lambda v: isinstance(v, str) and (v.startswith("android.") or v.startswith("XCUIElement")),
+    "CLASS_NAME": lambda v: isinstance(v, str)
+    and (v.startswith("android.") or v.startswith("XCUIElement")),
     # Ensure iOS Predicate contains ==
     "IOS_PREDICATE": lambda v: isinstance(v, str) and "==" in v,
     # Ensure iOS Class Chain starts with **
     "IOS_CLASS_CHAIN": lambda v: isinstance(v, str) and v.startswith("**/"),
     # Ensure Android UIAutomator has balanced parentheses and at least one method
-    "ANDROID_UIAUTOMATOR": lambda v: isinstance(v, str) and v.count('(') == v.count(')') and v.count('(') >= 1,
+    "ANDROID_UIAUTOMATOR": lambda v: isinstance(v, str)
+    and v.count("(") == v.count(")")
+    and v.count("(") >= 1,
     # IMAGE validation checks if the value is a string ending with .png or .jpg
     "IMAGE": lambda v: isinstance(v, str) and v.endswith((".png", ".jpg")),
     # below methods are not used in the project, only validates if they are strings
@@ -55,8 +63,9 @@ VALIDATORS = {
 }
 
 LOCATOR_PATTERN = re.compile(
-    r'^([a-zA-Z_][a-zA-Z0-9_]*)\s*=\s*\((AppiumBy\.[A-Z_]+)\s*,\s*([\'\"].+?[\'\"])\)'
+    r"^([a-zA-Z_][a-zA-Z0-9_]*)\s*=\s*\((AppiumBy\.[A-Z_]+)\s*,\s*(\".*?\"|\'.*?\')\s*\)"
 )
+
 
 def validate_locator(name, method, value):
     if not name.isupper():
@@ -76,6 +85,7 @@ def validate_locator(name, method, value):
 
     return None
 
+
 def find_locators_in_file(filepath):
     errors = []
     with open(filepath, "r", encoding="utf-8") as file:
@@ -87,6 +97,7 @@ def find_locators_in_file(filepath):
                 if error:
                     errors.append((filepath, line_num, line.strip(), error))
     return errors
+
 
 def find_el_files(base_dir="."):
     for root, _, files in os.walk(base_dir):
