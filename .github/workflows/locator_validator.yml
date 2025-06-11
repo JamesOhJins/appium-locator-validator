@@ -28,11 +28,4 @@ jobs:
         id: validate
         run: |
           source venv/bin/activate
-          python locator_validator.py > output.log
-          echo '---RESULT---'
-          cat output.log
-          echo "comment_body<<EOF" >> $GITHUB_OUTPUT
-          echo "\`\`\`" >> $GITHUB_OUTPUT
-          cat output.log >> $GITHUB_OUTPUT
-          echo "\`\`\`" >> $GITHUB_OUTPUT
-          echo "EOF" >> $GITHUB_OUTPUT
+          python locator_validator.py | tee output.log
