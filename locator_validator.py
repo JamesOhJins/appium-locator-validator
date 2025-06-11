@@ -1,6 +1,7 @@
 import ast
 import os
 import re
+import time
 from appium.webdriver.common.appiumby import AppiumBy
 
 SUPPORTED_APPIUMBY_METHODS = {
@@ -63,15 +64,15 @@ def validate_locator(name, method, value):
 
     method_key = method.replace("AppiumBy.", "")
     if method_key not in SUPPORTED_APPIUMBY_METHODS:
-        return f"Unsupported AppiumBy method: {method_key}"
+        return f"Unsupported AppiumBy method"
 
     try:
         value_unquoted = ast.literal_eval(value)
     except Exception:
-        return f"Could not parse locator value: {value}"
+        return f"Could not parse locator value"
 
     if method_key in VALIDATORS and not VALIDATORS[method_key](value_unquoted):
-        return f"Invalid selector value for method {method_key}: {value_unquoted}"
+        return f"Invalid selector value for method {method_key}"
 
     return None
 
@@ -95,6 +96,7 @@ def find_el_files(base_dir="."):
 
 
 if __name__ == "__main__":
+    start_time = time.time()
     all_errors = []
     for file_path in find_el_files():
         print(f"🔍 Scanning file: {file_path}")
@@ -105,7 +107,10 @@ if __name__ == "__main__":
     if all_errors:
         print("\n❌ Locator validation errors found:")
         for file_path, line_num, line, error in all_errors:
-            print(f"{file_path}:{line_num}: {error} -> {line}")
+            print(f"{file_path}:{line_num}: {error} -> \n{line}\n")
+        print(f"Execution time: {time.time() - start_time:.2f} seconds")
         exit(1)
     else:
         print("\n✅ All locators passed validation!")
+        print(f"Execution time: {time.time() - start_time:.2f} seconds")
+        exit(0)
