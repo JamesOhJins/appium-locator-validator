@@ -37,8 +37,8 @@ jobs:
           echo "\`\`\`" >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
 
-      - name: 💬 Post PR comment with results
-        uses: marocchino/sticky-pull-request-comment@v2
-        with:
-          header: locator-validator
-          message: ${{ steps.validate.outputs.comment_body }}
+      # - name: 💬 Post PR comment with results
+      #   uses: marocchino/sticky-pull-request-comment@v2
+      #   with:
+      #     header: locator-validator
+      #     message: ${{ steps.validate.outputs.comment_body }}
