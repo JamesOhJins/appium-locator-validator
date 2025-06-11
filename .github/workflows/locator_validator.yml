@@ -28,4 +28,5 @@ jobs:
         id: validate
         run: |
           source venv/bin/activate
-          python locator_validator.py | tee output.log
+          set -o pipefail # catch failures in any part of the pipeline
+          python locator_validator.py 2>&1 | tee output.log
