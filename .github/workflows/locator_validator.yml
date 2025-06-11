@@ -1,0 +1,44 @@
+name: Locator Validator
+
+on:
+  pull_request:
+    paths:
+      - '**.py'
+
+jobs:
+  validate-locators:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v3
+
+      - name: 🐍 Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.12'
+
+      - name: 📦 Install dependencies
+        run: |
+          python -m venv venv
+          source venv/bin/activate
+          pip install -r requirements.txt
+
+      - name: 🧪 Run locator validator and capture output
+        id: validate
+        run: |
+          source venv/bin/activate
+          python locator_validator.py > output.log || true
+          echo '---RESULT---'
+          cat output.log
+          echo "comment_body<<EOF" >> $GITHUB_OUTPUT
+          echo "\`\`\`" >> $GITHUB_OUTPUT
+          cat output.log >> $GITHUB_OUTPUT
+          echo "\`\`\`" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: 💬 Post PR comment with results
+        uses: marocchino/sticky-pull-request-comment@v2
+        with:
+          header: locator-validator
+          message: ${{ steps.validate.outputs.comment_body }}
