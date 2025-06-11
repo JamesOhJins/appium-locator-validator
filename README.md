@@ -45,7 +45,7 @@ BROKEN_UIAUTOMATOR = (AppiumBy.ANDROID_UIAUTOMATOR, "UiSelector.text(\"Login\")"
 
 ## 📋 Example Output
 ```bash
-🔍 Scanning file: ./loc/android/el_mirror_page.py
+🔍 Scanning file: ./loc/android/el_main_page.py
 
 ❌ Locator validation errors found:
 ./el_locator.py:4: Locator name 'lowercase_locator' is not in uppercase. -> 
